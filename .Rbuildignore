@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^.*\.RData$
+^data-raw$
+^build_test\.R$
+^doc$
+^scratch$
+^Meta$
+^cran-comments\.md$
+^CRAN-RELEASE$
