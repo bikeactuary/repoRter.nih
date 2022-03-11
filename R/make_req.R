@@ -44,9 +44,9 @@
 #'   \item{\code{include_active_projects}: logical(1); if TRUE (default), adds in active projects without regard for \code{policy_years}}
 #'   \item{\code{pi_names}: list(); API will return records with Project Investigators (PIs) wildcard-matching any of the strings
 #'         requested.\cr
-#'         If provided, the list must contain three named character vector elements: \code{first_name}, \code{last_name},
-#'         \code{any_name}. Each vector must contain at least one element - use a length-1 vector with an empty string (\code{= ""}
-#'         or \code{= character(1)}) for any name field you do not wish to search on.}
+#'         If provided, the list must contain three named character vector elements: \code{first_name},
+#'         \code{last_name}, \code{any_name}. Each vector must contain at least one element - use a length-1
+#'         vector with an empty string (\code{= ""} or \code{= character(1)}) for any name field you do not wish to search on.}
 #'   \item{\code{multi_pi_only: logical(1)}; default: FALSE; when multiple \code{pi_names} are matched, setting this value to TRUE
 #'         changes the logic from returning project records associated with ANY matched PI name to those associated with ALL names.}
 #'   \item{\code{po_names}: list(); Project Officers (POs), otherwise same comments as for \code{pi_names}}
@@ -59,18 +59,18 @@
 #'   \item{\code{org_states}: character(); one or more US States or Territories (note: requires the abbreviation codes: "NY", "PR", etc.)
 #'         in which a project organization may be based.}
 #'   \item{\code{project_nums}: character(); one or more project numbers (note: the alphanumeric variety of numbers); results will match
-#'         any of the specified strings. You may include explicit wildcard operators ("*") in the strings, e.g. "5UG1HD078437-\*" }
+#'         any of the specified strings. You may include explicit wildcard operators ("*") in the strings, e.g. "5UG1HD078437-\*"}
 #'   \item{\code{project_num_split}: list(6); the \code{project_nums} can be broken down to meaningful components which can be searched
 #'         individually using this argument.
 #'               These component codes are defined \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf#page=31}{here}
 #'               Your list must contain all of the following named elements:
 #'               \itemize{
-#'                   \item{\code{appl_type_code}: character(); }
-#'                   \item{\code{activity_code}: character(); }
-#'                   \item{\code{ic_code}: character(); }
-#'                   \item{\code{serial_num}: character(); }
-#'                   \item{\code{support_year}: character(); }
-#'                   \item{\code{suffix_code}: character(); }
+#'                   \item{\code{appl_type_code}: character();}
+#'                   \item{\code{activity_code}: character();}
+#'                   \item{\code{ic_code}: character();}
+#'                   \item{\code{serial_num}: character();}
+#'                   \item{\code{support_year}: character();}
+#'                   \item{\code{suffix_code}: character();}
 #'               }
 #'               Provide a length-1 vector containing an empty string (\code{=""} or \code{=character(1)}) for any element you do not want to search on
 #'       }
@@ -106,14 +106,14 @@
 #'   See \href{https://grants.nih.gov/grants/how-to-apply-application-guide/prepare-to-apply-and-register/understand-funding-opportunities.htm}{here}}
 #'   \item{\code{project_start_date}: list(2); provide a range for the project start date. Must pass as list containing the following named elements:
 #'                \itemize{
-#'                    \item{\code{from_date}: character(1); }
-#'                    \item{\code{to_date}: character(1); }
+#'                    \item{\code{from_date}: character(1);}
+#'                    \item{\code{to_date}: character(1);}
 #'                }
 #'        }
 #'   \item{\code{project_end_date: list(2)}; provide a range for the project end date - similar to \code{project_start_date}.
 #'                \itemize{
-#'                    \item{\code{from_date}: character(1); }
-#'                    \item{\code{to_date}: character(1); }
+#'                    \item{\code{from_date}: character(1);}
+#'                    \item{\code{to_date}: character(1);}
 #'                }
 #'   }
 #'   \item{\code{organization_type: character()}; one or more types of applicant organizations (e.g. "SCHOOLS OF MEDICINE"). There does not appear to be a
@@ -248,7 +248,7 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
   ## fill req w/ default values for these criteria to be explicit
   ## is_agency_admin --> this currently has no effect on results 
   ## is_agency_funding --> also no effect on result
-  ## include_active_projects --> limits to only active projects if TRUE (misleading name)
+  ## include_active_projects --> add in active projects (ignoring other criteria?)
   boolys <- c("use_relevance", "include_active_projects", "exclude_subprojects", "multi_pi_only",
               "newly_added_projects_only", "sub_project_only")
   

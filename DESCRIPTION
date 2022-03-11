@@ -1,7 +1,7 @@
 Type: Package
 Package: repoRter.nih
 Title: R Interface to the 'NIH RePORTER Project' API
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "Michael",
            family = "Barr, ACAS, MAAA, CPCU",
@@ -36,7 +36,6 @@ Suggests:
     rmarkdown,
     scales,
     tufte,
-    tools,
     spelling
 VignetteBuilder: 
     knitr

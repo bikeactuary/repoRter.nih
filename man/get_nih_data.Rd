@@ -12,26 +12,33 @@ get_nih_data(
 )
 }
 \arguments{
-\item{query}{A valid JSON request formatted for the RePORTER Project API, as returned by the \code{\link{make_req}} method}
+\item{query}{A valid JSON request formatted for the RePORTER Project API, as returned
+by the \code{\link{make_req}} method}
 
-\item{max_pages}{numeric(1); default: NULL; An integer specifying to only fetch (up to) the first \code{max_pages} number of pages from the result set.
-Useful for testing your query/obtaining schema information. Default behavior is to fetch all pages.}
+\item{max_pages}{numeric(1); default: NULL; An integer specifying to only fetch (up to)
+the first \code{max_pages} number of pages from the result set. Useful for testing your
+query/obtaining schema information. Default behavior is to fetch all pages.}
 
-\item{flatten_result}{(default: FALSE) If TRUE, flatten nested dataframes and collapse nested vectors to a single character column with elements delimited by a semi-colon}
+\item{flatten_result}{(default: FALSE) If TRUE, flatten nested dataframes and collapse nested
+vectors to a single character column with elements delimited by a semi-colon}
 
-\item{return_meta}{(default: FALSE) If TRUE, will return a \code{list} containing your result set as well as the meta data - this includes a count of total projects matching
+\item{return_meta}{(default: FALSE) If TRUE, will return a \code{list} containing your result
+set as well as the meta data - this includes a count of total projects matching
 your query and can be useful for programming.}
 }
 \value{
-A \code{tibble} containing your result set (API max of 10,000 records); or if \code{include_meta = TRUE}, a list containing your \code{tibble} and your metadata from the response
+When \code{return_meta = FALSE}: a \code{tibble} containing your result set
+  (up to API max of 10,000 records); else if \code{include_meta = TRUE}, a named list 
+  containing the result set and the metadata from the initial API response
 }
 \description{
-Easily send a pre-made JSON request to NIH RePORTER Project API, retrieve and process the results
+Easily send a pre-made JSON request to NIH RePORTER Project API,
+  retrieve and process the results
 }
 \details{
-A request to the RePORTER Project API requires retrieving paginated results, combining them, and often
-    flattening the combined ragged data.frame to a familiar flat format which we can use in analyses. This
-    method handles all of that for you.
+A request to the RePORTER Project API requires retrieving paginated results,
+  combining them, and often flattening the combined ragged data.frame to a familiar flat
+  format which we can use in analyses. This method handles all of that for you.
 }
 \examples{
 

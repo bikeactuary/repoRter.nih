@@ -6,6 +6,7 @@
 ^build_test\.R$
 ^doc$
 ^scratch$
+^blog$
 ^Meta$
 ^cran-comments\.md$
 ^CRAN-RELEASE$

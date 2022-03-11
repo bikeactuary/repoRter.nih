@@ -1,108 +1,22 @@
 ---
-title: "repoRter.nih: a convenient R interface to the NIH RePORTER Project API"
-author:
-- Michael Barr, ACAS, MAAA, CPCU
-output: 
-  pdf_document:
-    keep_md: yes
-    keep_tex: yes
-    pandoc_args: --listings
+title:
+output:
   html_document:
     highlight: tango
-    theme: flatly
-header-includes:
-- \UseRawInputEncoding
-- \usepackage{xcolor}
-- \definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
-- \definecolor{cerulean}{rgb}{0.0, 0.48, 0.65}
-- \definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
-- \hypersetup{colorlinks=true,linkcolor=airforceblue,citecolor=cerulean,urlcolor=burntorange}
-- \lstset{ backgroundcolor=\color[RGB]{248,248,248}, basewidth=0.5em, basicstyle=\small\ttfamily,
-  breakatwhitespace=true, breakautoindent=true, breaklines=true, captionpos=b, columns=flexible,
-  commentstyle=\color[rgb]{0.56,0.35,0.01}\itshape, escapeinside={\%*}{*)}, frame=tb,
-  keepspaces=true, keywordstyle=\color[rgb]{0.13,0.29,0.53}\bfseries, linewidth=\textwidth,
-  numberstyle=\footnotesize, showspaces=false, showstringspaces=false, showtabs=false,
-  stringstyle=\color[rgb]{0.31,0.60,0.02}, tabsize=2, }
-vignette: >
-  %\VignetteIndexEntry{repoRter.nih: a convenient R interface to the NIH RePORTER Project API}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    self_contained: yes
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  width = 95,
-  fig.dpi = 96,
-  cache.path = "cache/"
-)
-
-opts.old <- options()
-options(width = 95, cli.unicode = FALSE, cli.width = 95)
-```
-
-```{r, echo = FALSE, message = FALSE, fig.width=7, fig.height=4, fig.align='center'}
-library(tibble)
-library(repoRter.nih)
-library(ggplot2)
-library(ggrepel)
-library(dplyr)
-library(scales)
-library(tufte)
-data("covid_response_codes")
-
-req <- make_req(criteria =
-                  list(covid_response = c("All")),
-                include_fields = nih_fields %>%
-                  filter(payload_name %in% c("award_amount_range", "covid_response"))
-                %>% pull(include_name))
-
-res <- get_nih_data(req,
-                    flatten_result = TRUE)
-
-p <- res %>%
-  left_join(covid_response_codes, by = "covid_response") %>%
-  mutate(covid_code_desc = case_when(!is.na(fund_src) ~ paste0(covid_response, ": ", fund_src),
-                                     TRUE ~ paste0(covid_response, " (Multiple)"))) %>%
-  group_by(covid_code_desc) %>%
-  summarise(total_awards = sum(award_amount) / 1e6) %>%
-  ungroup() %>%
-  arrange(desc(covid_code_desc)) %>%
-  mutate(prop = total_awards / sum(total_awards),
-         csum = cumsum(prop),
-         ypos = csum - prop/2 ) %>%
-  ggplot(aes(x = "", y = prop, fill = covid_code_desc)) +
-  geom_bar(stat="identity") +
-  geom_text_repel(aes(label =
-                        paste0(dollar(total_awards,
-                                      accuracy = 1,
-                                      suffix = "M"),
-                               "\n", percent(prop, accuracy = .01)),
-                      y = ypos),
-                  show.legend = FALSE,
-                  nudge_x = .8,
-                  size = 3, color = "grey25") +
-  coord_polar(theta ="y") +
-  theme_void() +
-  theme(legend.position = "right",
-        legend.title = element_text(colour = "grey25"),
-        legend.text = element_text(colour="blue", size=6, 
-                                   face="bold"),
-        plot.title = element_text(color = "grey25"),
-        plot.caption = element_text(size = 6)) +
-  labs(caption = "Data Source: NIH RePORTER API v2") +
-  ggtitle("Legislative Source for NIH Covid Response Project Funding")
-
-rm(req, res)
-detach("package:repoRter.nih", unload = TRUE)
-
-p
+```{r, include=FALSE}
+opts_knit$set(upload.fun = function(file) {RWordPress::uploadFile(file)$url })
+options(width = 95, cli.unicode = FALSE, cli.width = 80)
 ```
 
 # Introduction
 
 The US National Institute of Health (NIH) received funding of approximately \$42 billion in fiscal year 2022; \$31 billion (72%) of this was awarded by the NIH in the form of research grant funding to hospitals, medical colleges, non-profits, businesses, and other organizations based in the U.S. and abroad.^[https://nexus.od.nih.gov/all/2021/04/21/fy-2020-by-the-numbers-extramural-investments-in-research] The NIH maintains a publicly available database called "RePORTER" to track this substantial flow of grant funding and makes it available to the public via [a web-based query interface](https://reporter.nih.gov/) as well as an API.
+<!-- wp:more -->
+<!--more-->
+<!-- /wp:more -->
 
 > "The NIH RePORTER APIs is designed to programmatically expose relevant scientific awards data from both NIH and non-NIH federal agencies for the consumption of project teams or external 3rd party applications to support reporting, data analysis, data integration or to satisfy other business needs as deemed pertinent." 
 >`r tufte::quote_footer('--NIH RePORTER v2 API Documentation')`
@@ -144,7 +58,7 @@ req <- make_req(criteria =
 
 Sending the request and retrieving results:
 
-```{r, cache = TRUE}
+```{r}
 res <- get_nih_data(req)
 class(res)
 ```
@@ -231,7 +145,7 @@ req <- make_req(criteria =
 
 Here we are asking for any orgs containing the strings "yale" or "new haven" (ignoring case) - there are implied wildcards on either end of the strings we provide. This is the same as `org_name LIKE '%yale%' OR org_name LIKE '%new haven%'` in a SQL WHERE clause.
 
-```{r, cache=TRUE}
+```{r}
 res <- get_nih_data(req, max_pages = 1)
 res %>% glimpse(width = getOption("cli.width"))
 ```
@@ -260,7 +174,7 @@ The `org_names_exact_match` criteria can be used as an alternative when we know 
 
 We can also filter projects by the geographic location (country/state/city) of the applicant organization.
 
-```{r, cache=TRUE}
+```{r}
 ## A valid request but probably not what we want
 req <- make_req(criteria = 
                   list(
@@ -304,7 +218,7 @@ Why are there projects from more recent years than 2015? Because the `include_ac
 
 We already provided one example of this search criteria above. Let's mix it up and request all Covid response projects.
 
-```{r, cache=TRUE}
+```{r}
 ## all projects funded by the Paycheck Protection Act, Coronavirus Response and Relief Act,
 ## and American Rescue Plan, in fiscal year 2021
 req <- make_req(criteria =
@@ -320,7 +234,7 @@ res$covid_response[[1]]
 
 `covid_response` is a nested list (with character vectors of variable length) within the return tibble. We can use `flatten_result = TRUE` here - elements of each vector will be collapsed to a single string delimited by ";", massaging the list to a single character vector.
 
-```{r covid, cache = TRUE}
+```{r covid}
 ## all projects funded by the Paycheck Protection Act, Coronavirus Response and Relief Act,
 ## and American Rescue Plan, in fiscal year 2021
 req <- make_req(criteria =
@@ -335,7 +249,7 @@ unique(res$covid_response)
 
 Some projects are being funded from multiple sources. Summarizing all Covid-related project awards:
 
-```{r, fig.width=7, fig.height=4}
+```{r, fig.align='center'}
 library(ggplot2)
 
 res %>%
@@ -379,161 +293,14 @@ data("covid_response_codes")
 covid_response_codes %>% print
 ```
 
-# Some Rocky Road Criteria
-
-Other criteria provide search and filtering capability on many of the nested data elements. These criteria are passed as lists and must include a value for each of the named elements within.
-
-### Ex. 4 - Principal Investigator/Officer name search
-
-The `pi_names` and `po_names` criteria allow the user to search for projects based on the first and last names of Principal Investigators and Principal Officers assigned. Each of these criteria must be provided as a list with three named character vector elements: `first_name`, `last_name`, and `any_name`. _Even if you only want to search on one of these name fields, you must provide the remaining elements as an empty string._ We will demonstrate with a search on PI name:
-
-```{r}
-## projects funded in 2021 where the principal investigator first name
-##  is "Michael" or begins with "Jo"
-req <- make_req(criteria = 
-                  list(fiscal_years = 2021,
-                       pi_names = list(first_name = c("Michael", "Jo*"),
-                                       last_name = c(""), # must specify all pi_names elements always
-                                       any_name = character(1))),
-                include_fields = nih_fields %>%
-                  filter(payload_name == "pi_names") %>%
-                  pull(include_name),
-                message = FALSE)
-
-res <- get_nih_data(req,
-                    max_pages = 1,
-                    flatten_result = TRUE)
-
-res %>% glimpse(width = getOption("cli.width"))
-```
-
-Here we searched for any projects with a PI first-named "Michael" or beginning with "Jo" - the "*" is a wildcard operator.
-
-Note that the first column in the return is a list of data frames of _variable height_ (not a nested `data.frame`) - we leave such returned elements to the user to handle extraction/formatting - flattening is only performed for lists of atomic vectors and nested data frames.
-
-### Ex. 5 - Advanced text search
-
-RePORTER allows users to search the project title, abstract, and tags for specific terms or phrases. You can access this capability with the `advanced_text_search` criteria - a named list with three elements:
-
-- `operator` may be either "and", "or", or "advanced" - and/or will specify the logical operator connecting multiple search terms. "advanced" allows the user to pass a boolean search string directly;
-- `search_field` can be any or multiple of "terms", "abstract", "projecttitle." To search all items, specify "all" or "" (a length 1 vector with an empty string);
-- `search_text` may be either a length 1 character vector of space-delimited search terms (when using "and" or "or" for the operator argument - the logical operator is inserted between all search terms); or it may be a boolean search string (when specifying "advanced" for the operator argument).
-
-```{r}
-## using advanced_text_search with boolean search string
-req <- make_req(criteria = 
-                  list(advanced_text_search =
-                         list(operator = "advanced",
-                              search_field = c("terms", "abstract"),
-                              search_text = "(head AND trauma) OR \"brain damage\" AND NOT \"psychological\"")),
-                include_fields = c("ProjectTitle", "AbstractText", "Terms") )
-
-res <- get_nih_data(req, max_pages = 1)
-```
-Let's inspect the fields we searched from one of these results:
-```{r}
-one_rec <- res %>%
-  slice(5) %>%
-  mutate(abstract_text = gsub("[\r\n]", " ", abstract_text))
-
-one_rec %>% pull(project_title) %>% print
-```
-
-```{r}
-## substr to avoid LaTeX error exceeding char limit
-one_rec %>% pull(abstract_text) %>% substr(1, 85) %>% print
-```
-
-```{r}
-one_rec %>% pull(terms) %>% substr(1, 85) %>% print
-```
-
-# Large Result Sets
-
-The RePORTER API provides no direct way to obtain complete result sets when searches yield over 10,000 records. `get_nih_data()` provides the `return_meta` argument which is defaulted to `FALSE`. When set to `TRUE` and combined with a little programming, you can easily obtain full result sets well beyond the 10K limit. One approach may be the following:
-
-1. Obtain a sample from your full result set by making the query you desire and calling `get_nih_data()` with `max_pages = 1` (or some small number of pages); also set `return_meta = TRUE` in order to determine the total number of records in the full result set
-2. Calculate quantiles for the sample distribution of the `award_amount` column
-    + Set the # of quantiles such that you can confidently infer that the number of records within each range from the full result set will contain <10K records
-3. Iterate over your quantiles making separate requests, passing the endpoints of each quantile to `award$award_amount_range` criteria
-    + Wait until the end to flatten results since some columns may flatten differently on smaller individual result sets, causing problems in combining them
-4. Bind your list of results together
-5. Flatten the complete result set, if desired
-
-Below is an implementation of the above logic:
-
-```{r, eval = FALSE}
-all_res <- list()
-for(y in 2017:2021) { ## five years to loop over, each year is ~80K records
-  ## We only need the AwardAmount for quantiles
-  req_sample <- make_req(criteria = list(fiscal_years = y),
-                         include_fields = "AwardAmount")
-  
-  ## get a sample of the result set - 1000 records should be enough
-  ## return the metadata
-  res_sample <- get_nih_data(req_sample, max_pages = 2, return_meta = TRUE)
-  
-  res_sample$meta$total %>% print ## there are 73,142 project records 
-  
-  ## deciles of award amount - each decile should contain ~7,314.2 records, approximately
-  qtiles <- res_sample$records %>% pull(award_amount) %>% quantile(na.rm = TRUE, probs = seq(.1, 1, .1))
-  
-  ## list for qtile results (full year)
-  this_res <- list()
-  ## for each qtile
-  for (i in 1:length(qtiles)) {
-    if (i == 1) {
-      award_min <- 0
-    } else {
-      award_min <- ceiling(qtiles[i-1])+.01
-    }
-    if (i == length(qtiles)) {
-      award_max <- 1e9 ## arbitrarily huge
-    } else {
-      award_max <- ceiling(qtiles[i])
-    }
-    req <- make_req(criteria = list(fiscal_years = y,
-                                    award = list(award_notice_date = "",
-                                                 award_notice_opr = "",
-                                                 award_amount_range = list(min_amount = award_min,
-                                                                           max_amount = award_max))))
-    ## result set for quantile
-    this_res[[i]] <- get_nih_data(req, flatten_result = FALSE)
-  }
-  ## list of result sets for the year
-  yr_res[[y %>% as.character()]] <- this_res
-}
-
-## shape it up
-all_res <- unlist(yr_res, recursive = FALSE) %>%
-  bind_rows() %>%
-  flatten(recursive = FALSE) %>%
-  clean_names()
-
-## pull out everything that is flat
-flat_columns <- all_res %>%
-  select_if(is.atomic)
-
-## everything that isn't
-annoying_columns <- all_res %>%
-  select_if(!is.atomic)
-```
-
 # Additional Resources
 
-- The [RePORTER web interface](https://reporter.nih.gov/advanced-search) and [official API documentation](https://api.reporter.nih.gov/documents/Data%20Elements%20for%20RePORTER%20Project%20API%20v2.pdf) are useful for getting familiar with available search parameters
-- ...and the homepage with further examples/documentation is [here](https://api.reporter.nih.gov/)
-- Information on NIH study sections, IRGs, etc. is [here](https://public.csr.nih.gov/StudySections)
-- h/t to Chris whose [code on github](https://github.com/christopherBelter/nih_reporter_api) was all I could find existing in R and served as a starting point for this work
+The [full vignette](https://cran.r-project.org/web/packages/repoRter.nih/vignettes/repoRter_nih.pdf) contains a few more advanced examples, including boolean search functionality on the project title, abstract, and tagged project terms. It also includes an example which allows the user to retrieve complete result sets above the 10,000 record limit through by applying some basic statistics and a little programming.  
 
-# Session Information
+The [RePORTER web interface](https://reporter.nih.gov/advanced-search) and [official API documentation](https://api.reporter.nih.gov/documents/Data%20Elements%20for%20RePORTER%20Project%20API%20v2.pdf) are useful for getting familiar with available search parameters  
 
-The version number of R and packages loaded for generating the vignette were:
+h/t to Chris whose [code on github](https://github.com/christopherBelter/nih_reporter_api) was all I could find existing in R and served as a starting point for this work
 
-```{r}
-sessionInfo()
-```
-
-```{r, include=FALSE}
-options(opts.old)
+```{r, echo = FALSE}
+knitr::knit_exit()
 ```
