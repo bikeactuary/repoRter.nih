@@ -106,31 +106,31 @@
 #'   See \href{https://grants.nih.gov/grants/how-to-apply-application-guide/prepare-to-apply-and-register/understand-funding-opportunities.htm}{here}}
 #'   \item{\code{project_start_date}: list(2); provide a range for the project start date. Must pass as list containing the following named elements:
 #'                \itemize{
-#'                    \item{\code{from_date}: character(1);}
-#'                    \item{\code{to_date}: character(1);}
+#'                    \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+#'                    \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
 #'                }
 #'        }
 #'   \item{\code{project_end_date: list(2)}; provide a range for the project end date - similar to \code{project_start_date}.
 #'                \itemize{
-#'                    \item{\code{from_date}: character(1);}
-#'                    \item{\code{to_date}: character(1);}
+#'                    \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+#'                    \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
 #'                }
 #'   }
 #'   \item{\code{organization_type: character()}; one or more types of applicant organizations (e.g. "SCHOOLS OF MEDICINE"). There does not appear to be a
 #'         documented list of valid values, but you can obtain one by pulling all records in a recent year and extracting unique values.}
-#'   \item{\code{award}: list(3): parameters related to the award. If you use this criteria, you must provide values for all sub-criteria
-#'      \itemize{
-#'        \item{\code{award_notice_date: character(1)}; the award notice date}
-#'        \item{\code{award_notice_opr: character(1)}; wish I could tell you what this is - use an empty string}
-#'        \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
-#'              enter 0 for min and 1e9 for max
-#'          \itemize{
-#'            \item{\code{min_amount: numeric(1)}; a real number between 0 and something very large}
-#'            \item{\code{max_amount: numeric(1)}; a real number between 0 and something very large}
-#'          }
+#'   \item{\code{award_notice_date: list(2)}; the award notice date as a range, or you can provide just one of the min/max date, but if you do you must provide the other as an empty string.
+#'           \itemize{
+#'              \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+#'              \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
+#'           }
 #'        }
-#'      }
-#'    }
+#'   \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
+#'              enter 0 for min and 1e9 for max
+#'           \itemize{
+#'              \item{\code{min_amount: numeric(1)}; a real number between 0 and something very large}
+#'              \item{\code{max_amount: numeric(1)}; a real number between 0 and something very large}
+#'           }
+#'        }
 #'   \item{\code{exclude_subprojects: logical(1)}; default: FALSE; related to multiproject research awards, TRUE will limit results to just the parent project.}
 #'   \item{\code{sub_project_only: logical(1)}; default: FALSE; similar to \code{exclude_subprojects}, this field will limit results to just the subprojects,
 #'         excluding the parent.}
@@ -292,7 +292,7 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
   }
   
   if (!is.null(criteria$po_names)) {
-    ## asserrt three named character vectors in list
+    ## assert three named character vectors in list
     assert_that(is.list(criteria$po_names),
                 has_name(criteria$po_names, "any_name"),
                 has_name(criteria$po_names, "first_name"),
@@ -323,7 +323,7 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
   }
   
   if (!is.null(criteria$project_num_split)) {
-    ## asserrt 6 named character vectors in list
+    ## assert 6 named character vectors in list
     assert_that(is.list(criteria$project_num_split),
                 has_name(criteria$project_num_split, "appl_type_code"),
                 has_name(criteria$project_num_split, "activity_code"),
@@ -340,7 +340,7 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
   }
   
   if (!is.null(criteria$spending_categories)) {
-    ## asserrt two named vectors in list
+    ## assert two named vectors in list
     assert_that(is.list(criteria$spending_categories),
                 length(criteria$spending_categories) == 2,
                 has_name(criteria$spending_categories, "values"),
@@ -351,17 +351,20 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
   }
   
   if (!is.null(criteria$project_start_date)) {
-    ## asserrt two named vectors in list
+    ## assert two named vectors in list
     assert_that(is.list(criteria$project_start_date),
                 length(criteria$project_start_date) == 2,
                 has_name(criteria$project_start_date, "from_date"),
                 has_name(criteria$project_start_date, "to_date"),
                 is.character(criteria$project_start_date$from_date),
                 is.character(criteria$project_start_date$to_date))
+    
+    criteria$project_start_date$from_date %<>% unbox()
+    criteria$project_start_date$to_date %<>% unbox()
   }
   
   if (!is.null(criteria$project_end_date)) {
-    ## asserrt two named dates in list
+    ## assert two named dates in list
     assert_that(is.list(criteria$project_end_date),
                 length(criteria$project_end_date) == 2,
                 has_name(criteria$project_end_date, "from_date"),
@@ -390,31 +393,32 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
                 is.character(criteria$full_study_sections$url))
   }
   
-  if (!is.null(criteria$award)) {
+  if (!is.null(criteria$award_amount_range)) {
+    assert_that(
+      length(criteria$award_amount_range) == 2,
+      has_name(criteria$award_amount_range, "min_amount"),
+      has_name(criteria$award_amount_range, "max_amount"),
+      is.number(criteria$award_amount_range$min_amount),
+      is.number(criteria$award_amount_range$max_amount))
     
-    assert_that(is.list(criteria$award),
-                length(criteria$award) == 3,
-                has_name(criteria$award, "award_notice_date"),
-                has_name(criteria$award, "award_notice_opr"),
-                has_name(criteria$award, "award_amount_range"),
-                is.character(criteria$award$award_notice_date),
-                is.character(criteria$award$award_notice_opr),
-                is.list(criteria$award$award_amount_range),
-                length(criteria$award$award_amount_range) == 2,
-                has_name(criteria$award$award_amount_range, "min_amount"),
-                has_name(criteria$award$award_amount_range, "max_amount"),
-                is.numeric(criteria$award$award_amount_range$min_amount),
-                is.number(criteria$award$award_amount_range$max_amount))
+    criteria$award_amount_range$max_amount %<>% unbox()
+    criteria$award_amount_range$min_amount %<>% unbox()
+  }
+  
+  if (!is.null(criteria$award_notice_date)) {
+    assert_that(
+      is.list(criteria$award_notice_date),
+      length(criteria$award_notice_date) == 2,
+      has_name(criteria$award_notice_date, "from_date"),
+      has_name(criteria$award_notice_date, "to_date"),
+      is.character(criteria$award_notice_date$from_date),
+      is.character(criteria$award_notice_date$to_date))
     
-    criteria$award$award_notice_date <- unbox(criteria$award$award_notice_date)
-    criteria$award$award_notice_opr <- unbox(criteria$award$award_notice_opr)
-    criteria$award$award_amount_range$max_amount <- unbox(criteria$award$award_amount_range$max_amount)
-    criteria$award$award_amount_range$min_amount <- unbox(criteria$award$award_amount_range$min_amount)
+    criteria$award_notice_date$from_date %<>% unbox()
+    criteria$award_notice_date$to_date %<>% unbox()
   }
   
   if (!is.null(criteria$advanced_text_search)) {
-    # all(criteria$advanced_text_search$search_field %in% c("projecttitle", "abstract", "terms")) %>% print
-    
     assert_that(is.list(criteria$advanced_text_search),
                 length(criteria$advanced_text_search) == 3,
                 has_name(criteria$advanced_text_search, "operator"),

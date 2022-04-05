@@ -16,6 +16,7 @@ header-includes:
 - \definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
 - \definecolor{cerulean}{rgb}{0.0, 0.48, 0.65}
 - \definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+- \usepackage{hyperref}
 - \hypersetup{colorlinks=true,linkcolor=airforceblue,citecolor=cerulean,urlcolor=burntorange}
 - \lstset{ backgroundcolor=\color[RGB]{248,248,248}, basewidth=0.5em, basicstyle=\small\ttfamily,
   breakatwhitespace=true, breakautoindent=true, breaklines=true, captionpos=b, columns=flexible,
@@ -453,10 +454,10 @@ one_rec %>% pull(terms) %>% substr(1, 85) %>% print
 The RePORTER API provides no direct way to obtain complete result sets when searches yield over 10,000 records. `get_nih_data()` provides the `return_meta` argument which is defaulted to `FALSE`. When set to `TRUE` and combined with a little programming, you can easily obtain full result sets well beyond the 10K limit. One approach may be the following:
 
 1. Obtain a sample from your full result set by making the query you desire and calling `get_nih_data()` with `max_pages = 1` (or some small number of pages); also set `return_meta = TRUE` in order to determine the total number of records in the full result set
-2. Calculate quantiles for the sample distribution of the `award_amount` column
-    + Set the # of quantiles such that you can confidently infer that the number of records within each range from the full result set will contain <10K records
-3. Iterate over your quantiles making separate requests, passing the endpoints of each quantile to `award$award_amount_range` criteria
-    + Wait until the end to flatten results since some columns may flatten differently on smaller individual result sets, causing problems in combining them
+2. Calculate quantiles for the sample distribution of a column of your choice (e.g. `award_amount`)
+    + Set the # of quantiles such that you can confidently infer that the number of records within each quantile range will contain <10K records *within the full result set*
+3. Iterate over your quantiles making separate requests, passing the endpoints of each quantile to `award_amount_range` criteria
+    + Wait until the end to flatten the combined results since some columns may flatten differently on smaller individual result sets, causing problems in combining them after flattening
 4. Bind your list of results together
 5. Flatten the complete result set, if desired
 
@@ -473,7 +474,8 @@ for(y in 2017:2021) { ## five years to loop over, each year is ~80K records
   ## return the metadata
   res_sample <- get_nih_data(req_sample, max_pages = 2, return_meta = TRUE)
   
-  res_sample$meta$total %>% print ## there are 73,142 project records 
+  paste0("There are ", res_sample$meta$total, " results for fiscal year ", y) %>%
+    print()
   
   ## deciles of award amount - each decile should contain ~7,314.2 records, approximately
   qtiles <- res_sample$records %>% pull(award_amount) %>% quantile(na.rm = TRUE, probs = seq(.1, 1, .1))
@@ -493,14 +495,12 @@ for(y in 2017:2021) { ## five years to loop over, each year is ~80K records
       award_max <- ceiling(qtiles[i])
     }
     req <- make_req(criteria = list(fiscal_years = y,
-                                    award = list(award_notice_date = "",
-                                                 award_notice_opr = "",
-                                                 award_amount_range = list(min_amount = award_min,
-                                                                           max_amount = award_max))))
+                                    award_amount_range = list(min_amount = award_min,
+                                                              max_amount = award_max)))
     ## result set for quantile
     this_res[[i]] <- get_nih_data(req, flatten_result = FALSE)
   }
-  ## list of result sets for the year
+  ## list of result sets for each year
   yr_res[[y %>% as.character()]] <- this_res
 }
 
@@ -518,6 +518,8 @@ flat_columns <- all_res %>%
 annoying_columns <- all_res %>%
   select_if(!is.atomic)
 ```
+
+Note that using `award_amount` for this purpose will omit records with missing values. If you need these included, you may consider similar logic applied to an alternative field such as `award_notice_date`.
 
 # Additional Resources
 
