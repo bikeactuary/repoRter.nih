@@ -120,7 +120,12 @@
 #'         documented list of valid values, but you can obtain one by pulling all records in a recent year and extracting unique values.}
 #'   \item{\code{award}: list(3): parameters related to the award. If you use this criteria, you must provide values for all sub-criteria
 #'      \itemize{
-#'        \item{\code{award_notice_date: character(1)}; the award notice date}
+#'        \item{\code{award_notice_date: list(2)}; the award notice date as a range, or you can provide just one of the min/max date, but if you do you must provide the other as an empty string.
+#'            \itemize{
+#'                    \item{\code{from_date}: character(1);}
+#'                    \item{\code{to_date}: character(1);}
+#'                }
+#'        }
 #'        \item{\code{award_notice_opr: character(1)}; wish I could tell you what this is - use an empty string}
 #'        \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
 #'              enter 0 for min and 1e9 for max
@@ -358,6 +363,9 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
                 has_name(criteria$project_start_date, "to_date"),
                 is.character(criteria$project_start_date$from_date),
                 is.character(criteria$project_start_date$to_date))
+    
+    criteria$project_start_date$from_date %<>% unbox()
+    criteria$project_start_date$to_date %<>% unbox()
   }
   
   if (!is.null(criteria$project_end_date)) {
@@ -397,7 +405,10 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
                 has_name(criteria$award, "award_notice_date"),
                 has_name(criteria$award, "award_notice_opr"),
                 has_name(criteria$award, "award_amount_range"),
-                is.character(criteria$award$award_notice_date),
+                is.list(criteria$award$award_notice_date),
+                length(criteria$award$award_notice_date) == 2,
+                is.character(criteria$award$award_notice_date$from_date),
+                is.character(criteria$award$award_notice_date$to_date),
                 is.character(criteria$award$award_notice_opr),
                 is.list(criteria$award$award_amount_range),
                 length(criteria$award$award_amount_range) == 2,
@@ -406,10 +417,12 @@ make_req <- function(criteria = list(fiscal_years = lubridate::year(Sys.Date()))
                 is.numeric(criteria$award$award_amount_range$min_amount),
                 is.number(criteria$award$award_amount_range$max_amount))
     
-    criteria$award$award_notice_date <- unbox(criteria$award$award_notice_date)
     criteria$award$award_notice_opr <- unbox(criteria$award$award_notice_opr)
     criteria$award$award_amount_range$max_amount <- unbox(criteria$award$award_amount_range$max_amount)
     criteria$award$award_amount_range$min_amount <- unbox(criteria$award$award_amount_range$min_amount)
+    
+    criteria$award$award_notice_date$from_date %<>% unbox()
+    criteria$award$award_notice_date$to_date %<>% unbox()
   }
   
   if (!is.null(criteria$advanced_text_search)) {

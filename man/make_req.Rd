@@ -144,7 +144,12 @@ The maximum number of records that can be returned from any result set is 10,000
         documented list of valid values, but you can obtain one by pulling all records in a recent year and extracting unique values.}
   \item{\code{award}: list(3): parameters related to the award. If you use this criteria, you must provide values for all sub-criteria
      \itemize{
-       \item{\code{award_notice_date: character(1)}; the award notice date}
+       \item{\code{award_notice_date: list(2)}; the award notice date as a range, or you can provide just one of the min/max date, but if you do you must provide the other as an empty string.
+           \itemize{
+                   \item{\code{from_date}: character(1);}
+                   \item{\code{to_date}: character(1);}
+               }
+       }
        \item{\code{award_notice_opr: character(1)}; wish I could tell you what this is - use an empty string}
        \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
              enter 0 for min and 1e9 for max
