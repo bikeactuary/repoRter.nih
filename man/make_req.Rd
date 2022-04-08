@@ -130,36 +130,31 @@ The maximum number of records that can be returned from any result set is 10,000
   See \href{https://grants.nih.gov/grants/how-to-apply-application-guide/prepare-to-apply-and-register/understand-funding-opportunities.htm}{here}}
   \item{\code{project_start_date}: list(2); provide a range for the project start date. Must pass as list containing the following named elements:
                \itemize{
-                   \item{\code{from_date}: character(1);}
-                   \item{\code{to_date}: character(1);}
+                   \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+                   \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
                }
        }
   \item{\code{project_end_date: list(2)}; provide a range for the project end date - similar to \code{project_start_date}.
                \itemize{
-                   \item{\code{from_date}: character(1);}
-                   \item{\code{to_date}: character(1);}
+                   \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+                   \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
                }
   }
   \item{\code{organization_type: character()}; one or more types of applicant organizations (e.g. "SCHOOLS OF MEDICINE"). There does not appear to be a
         documented list of valid values, but you can obtain one by pulling all records in a recent year and extracting unique values.}
-  \item{\code{award}: list(3): parameters related to the award. If you use this criteria, you must provide values for all sub-criteria
-     \itemize{
-       \item{\code{award_notice_date: list(2)}; the award notice date as a range, or you can provide just one of the min/max date, but if you do you must provide the other as an empty string.
-           \itemize{
-                   \item{\code{from_date}: character(1);}
-                   \item{\code{to_date}: character(1);}
-               }
+  \item{\code{award_notice_date: list(2)}; the award notice date as a range, or you can provide just one of the min/max date, but if you do you must provide the other as an empty string.
+          \itemize{
+             \item{\code{from_date}: character(1); string date in \%Y-\%m-\%d format. See \code{?base::format} for converting from date class.}
+             \item{\code{to_date}: character(1); string date in \%Y-\%m-\%d format.}
+          }
        }
-       \item{\code{award_notice_opr: character(1)}; wish I could tell you what this is - use an empty string}
-       \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
+  \item{\code{award_amount_range: list(2)}; a numeric range - if you don't want to filter by this sub-criteria (but are filtering on some other award criteria),
              enter 0 for min and 1e9 for max
-         \itemize{
-           \item{\code{min_amount: numeric(1)}; a real number between 0 and something very large}
-           \item{\code{max_amount: numeric(1)}; a real number between 0 and something very large}
-         }
+          \itemize{
+             \item{\code{min_amount: numeric(1)}; a real number between 0 and something very large}
+             \item{\code{max_amount: numeric(1)}; a real number between 0 and something very large}
+          }
        }
-     }
-   }
   \item{\code{exclude_subprojects: logical(1)}; default: FALSE; related to multiproject research awards, TRUE will limit results to just the parent project.}
   \item{\code{sub_project_only: logical(1)}; default: FALSE; similar to \code{exclude_subprojects}, this field will limit results to just the subprojects,
         excluding the parent.}
