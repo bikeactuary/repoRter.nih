@@ -52,6 +52,7 @@ library(dplyr)
 library(scales)
 library(tufte)
 data("covid_response_codes")
+data("nih_fields")
 
 req <- make_req(criteria =
                   list(covid_response = c("All")),
@@ -434,7 +435,7 @@ res <- get_nih_data(req, max_pages = 1)
 Let's inspect the fields we searched from one of these results:
 ```{r}
 one_rec <- res %>%
-  slice(5) %>%
+  slice(42) %>%
   mutate(abstract_text = gsub("[\r\n]", " ", abstract_text))
 
 one_rec %>% pull(project_title) %>% print

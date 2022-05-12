@@ -56,7 +56,7 @@
 get_nih_data <- function(query, max_pages = NULL, flatten_result = FALSE, return_meta = FALSE) {
   
   assert_that(validate(query),
-              is.numeric(max_pages) | is.null(max_pages),
+              is.null(max_pages) || is.numeric(max_pages),
               is.logical(flatten_result),
               is.logical(return_meta))
   
@@ -80,12 +80,15 @@ get_nih_data <- function(query, max_pages = NULL, flatten_result = FALSE, return
     error = function(msg) {
       message(paste0("Failed unexpectedly on initial connect to API. Here is the error message from POST call:",
                      "\n", msg) %>% red() )
-      stop("Exiting from get_nih_data()")
+      message("Exiting from get_nih_data()")
+      return(NA)
     }
   )
   
   if (res$status_code != 200) {
-    stop("API Error: received non-200 response")
+    message("API Error: received non-200 response - please try again later and if the issue persists
+            report the issue to the package maintainer (include the request JSON which is failing).")
+    return(NA)
   }
   
   res %<>% content(as = "text") %>%
