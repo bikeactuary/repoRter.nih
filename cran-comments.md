@@ -7,6 +7,9 @@
 - Spelling NOTE is false-positive (these are contained in quotes), other 2 
   NOTEs can by ignored
 - Still no WARNINGs/ERRORs in r-hub or win-devel tests
+- I've re-used one chunk output to reduce run-time in the vignette build and 
+  eliminated /cache use which could add some time for disk I/O. That said, this
+  takes 25 seconds to build locally.
 
 ## Test environments
 - R-hub windows-x86_64-devel (r-devel)
