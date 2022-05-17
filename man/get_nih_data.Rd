@@ -29,7 +29,9 @@ your query and can be useful for programming.}
 \value{
 When \code{return_meta = FALSE}: a \code{tibble} containing your result set
   (up to API max of 10,000 records); else if \code{include_meta = TRUE}, a named list 
-  containing the result set and the metadata from the initial API response
+  containing the result set and the metadata from the initial API response.
+  
+  If an API error occurs, this method will print an informative message and return \code{NA}.
 }
 \description{
 Easily send a pre-made JSON request to NIH RePORTER Project API,
