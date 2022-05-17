@@ -1,3 +1,13 @@
+## Maintainer Notes:
+- I've updated get_nih_data() to no longer use stop() and instead return(NA) when
+  the underlying API service is unavailable or otherwise returns a non-200 response
+- I've updated the vignette to handle such cases without throwing exception or 
+  failing to render
+- Incremented version to 0.1.3
+- Spelling NOTE is false-positive (these are contained in quotes), other 2 
+  NOTEs can by ignored
+- Still no WARNINGs/ERRORs in r-hub or win-devel tests
+
 ## Test environments
 - R-hub windows-x86_64-devel (r-devel)
 - R-hub ubuntu-gcc-release (r-release)
@@ -13,6 +23,7 @@
   Package was archived on CRAN
   
   Possibly misspelled words in DESCRIPTION:
+    JSON (10:67)
     RePORTER (11:66)
 
 ❯ On windows-x86_64-devel (r-devel)

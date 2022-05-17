@@ -16,7 +16,9 @@
 #' 
 #' @return When \code{return_meta = FALSE}: a \code{tibble} containing your result set
 #'   (up to API max of 10,000 records); else if \code{include_meta = TRUE}, a named list 
-#'   containing the result set and the metadata from the initial API response
+#'   containing the result set and the metadata from the initial API response.
+#'   
+#'   If an API error occurs, this method will print an informative message and return \code{NA}.
 #' 
 #' @details A request to the RePORTER Project API requires retrieving paginated results,
 #'   combining them, and often flattening the combined ragged data.frame to a familiar flat

@@ -1,6 +1,7 @@
-# repoRter.nih 0.1.2
+# repoRter.nih 0.1.3
 
 * Update get_nih_data() to return NA when API call returns non-200 response
+* Modified vignette to render without error when API service is down
 
 # repoRter.nih 0.1.2
 

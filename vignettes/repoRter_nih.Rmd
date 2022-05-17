@@ -63,43 +63,47 @@ req <- make_req(criteria =
 res <- get_nih_data(req,
                     flatten_result = TRUE)
 
-p <- res %>%
-  left_join(covid_response_codes, by = "covid_response") %>%
-  mutate(covid_code_desc = case_when(!is.na(fund_src) ~ paste0(covid_response, ": ", fund_src),
-                                     TRUE ~ paste0(covid_response, " (Multiple)"))) %>%
-  group_by(covid_code_desc) %>%
-  summarise(total_awards = sum(award_amount) / 1e6) %>%
-  ungroup() %>%
-  arrange(desc(covid_code_desc)) %>%
-  mutate(prop = total_awards / sum(total_awards),
-         csum = cumsum(prop),
-         ypos = csum - prop/2 ) %>%
-  ggplot(aes(x = "", y = prop, fill = covid_code_desc)) +
-  geom_bar(stat="identity") +
-  geom_text_repel(aes(label =
-                        paste0(dollar(total_awards,
-                                      accuracy = 1,
-                                      suffix = "M"),
-                               "\n", percent(prop, accuracy = .01)),
-                      y = ypos),
-                  show.legend = FALSE,
-                  nudge_x = .8,
-                  size = 3, color = "grey25") +
-  coord_polar(theta ="y") +
-  theme_void() +
-  theme(legend.position = "right",
-        legend.title = element_text(colour = "grey25"),
-        legend.text = element_text(colour="blue", size=6, 
-                                   face="bold"),
-        plot.title = element_text(color = "grey25"),
-        plot.caption = element_text(size = 6)) +
-  labs(caption = "Data Source: NIH RePORTER API v2") +
-  ggtitle("Legislative Source for NIH Covid Response Project Funding")
-
-rm(req, res)
+if (class(res)[1] == "tbl_df") {
+  p <- res %>%
+    left_join(covid_response_codes, by = "covid_response") %>%
+    mutate(covid_code_desc = case_when(!is.na(fund_src) ~ paste0(covid_response, ": ", fund_src),
+                                       TRUE ~ paste0(covid_response, " (Multiple)"))) %>%
+    group_by(covid_code_desc) %>%
+    summarise(total_awards = sum(award_amount) / 1e6) %>%
+    ungroup() %>%
+    arrange(desc(covid_code_desc)) %>%
+    mutate(prop = total_awards / sum(total_awards),
+           csum = cumsum(prop),
+           ypos = csum - prop/2 ) %>%
+    ggplot(aes(x = "", y = prop, fill = covid_code_desc)) +
+    geom_bar(stat="identity") +
+    geom_text_repel(aes(label =
+                          paste0(dollar(total_awards,
+                                        accuracy = 1,
+                                        suffix = "M"),
+                                 "\n", percent(prop, accuracy = .01)),
+                        y = ypos),
+                    show.legend = FALSE,
+                    nudge_x = .8,
+                    size = 3, color = "grey25") +
+    coord_polar(theta ="y") +
+    theme_void() +
+    theme(legend.position = "right",
+          legend.title = element_text(colour = "grey25"),
+          legend.text = element_text(colour="blue", size=6, 
+                                     face="bold"),
+          plot.title = element_text(color = "grey25"),
+          plot.caption = element_text(size = 6)) +
+    labs(caption = "Data Source: NIH RePORTER API v2") +
+    ggtitle("Legislative Source for NIH Covid Response Project Funding")
+}
 detach("package:repoRter.nih", unload = TRUE)
 
-p
+rm(req, res)
+
+if (class(p)[1] == "gg") {
+  p
+}
 ```
 
 # Introduction
@@ -250,7 +254,11 @@ res %>% glimpse(width = getOption("cli.width"))
 
 Most users will prefer the flattened format above. It looks like Yale is busy, but it is not the only org matching our search.
 
-```{r}
+```{r, echo = FALSE}
+evl <- class(res)[1] == "tbl_df"
+```
+
+```{r, eval=evl}
 res %>% 
   group_by(organization_org_name) %>%
   summarise(project_count = n())
@@ -316,6 +324,13 @@ req <- make_req(criteria =
                 %>% pull(include_name))
 
 res <- get_nih_data(req)
+```
+
+```{r, echo=FALSE}
+evl <- class(res)[1] == "tbl_df"
+```
+
+```{r, eval=evl}
 res$covid_response %>% class()
 res$covid_response[[1]]
 ```
@@ -331,13 +346,19 @@ req <- make_req(criteria =
 
 res <- get_nih_data(req,
                     flatten_result = TRUE)
+```
 
+```{r, echo=FALSE}
+evl <- class(res)[1] == "tbl_df"
+```
+
+```{r, eval=evl}
 unique(res$covid_response)
 ```
 
 Some projects are being funded from multiple sources. Summarizing all Covid-related project awards:
 
-```{r, fig.width=7, fig.height=4}
+```{r, eval=evl, fig.width=7, fig.height=4}
 library(ggplot2)
 
 res %>%
@@ -432,8 +453,14 @@ req <- make_req(criteria =
 
 res <- get_nih_data(req, max_pages = 1)
 ```
+
 Let's inspect the fields we searched from one of these results:
-```{r}
+
+```{r, echo = FALSE}
+evl <- class(res)[1] == "tbl_df"
+```
+
+```{r, eval=evl}
 one_rec <- res %>%
   slice(42) %>%
   mutate(abstract_text = gsub("[\r\n]", " ", abstract_text))
@@ -441,12 +468,12 @@ one_rec <- res %>%
 one_rec %>% pull(project_title) %>% print
 ```
 
-```{r}
+```{r, eval=evl}
 ## substr to avoid LaTeX error exceeding char limit
 one_rec %>% pull(abstract_text) %>% substr(1, 85) %>% print
 ```
 
-```{r}
+```{r, eval=evl}
 one_rec %>% pull(terms) %>% substr(1, 85) %>% print
 ```
 
@@ -456,9 +483,9 @@ The RePORTER API provides no direct way to obtain complete result sets when sear
 
 1. Obtain a sample from your full result set by making the query you desire and calling `get_nih_data()` with `max_pages = 1` (or some small number of pages); also set `return_meta = TRUE` in order to determine the total number of records in the full result set
 2. Calculate quantiles for the sample distribution of a column of your choice (e.g. `award_amount`)
-    + Set the # of quantiles such that you can confidently infer that the number of records within each quantile range will contain <10K records *within the full result set*
++ Set the # of quantiles such that you can confidently infer that the number of records within each quantile range will contain <10K records *within the full result set*
 3. Iterate over your quantiles making separate requests, passing the endpoints of each quantile to `award_amount_range` criteria
-    + Wait until the end to flatten the combined results since some columns may flatten differently on smaller individual result sets, causing problems in combining them after flattening
++ Wait until the end to flatten the combined results since some columns may flatten differently on smaller individual result sets, causing problems in combining them after flattening
 4. Bind your list of results together
 5. Flatten the complete result set, if desired
 
