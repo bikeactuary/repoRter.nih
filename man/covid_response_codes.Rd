@@ -19,6 +19,6 @@ data("covid_response_codes")
 A \code{tibble} containing name translations between \code{covid_response_code} and the funding source(s)
 }
 \references{
-\href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf}{NIH RePORTER API Documentation}
+\href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf}{NIH RePORTER API Documentation}
 }
 \keyword{datasets}

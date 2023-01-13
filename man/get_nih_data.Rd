@@ -44,7 +44,6 @@ A request to the RePORTER Project API requires retrieving paginated results,
 }
 \examples{
 
-\donttest{
 library(repoRter.nih)
 
 ## make the usual request
@@ -56,6 +55,7 @@ req <- make_req(criteria =
                  message = FALSE)
 
 ## get the data ragged
+\dontrun{
 res <- get_nih_data(req,
                     max_pages = 1)
 

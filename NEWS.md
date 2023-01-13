@@ -1,3 +1,8 @@
+# repoRter.nih 0.1.4
+
+* Changes to ensure calls to API are not tested on CRAN (\dontrun{} replaces \donttest{})
+* Exit vignette knitting early if API not available, for CRAN
+
 # repoRter.nih 0.1.3
 
 * Update get_nih_data() to return NA when API call returns non-200 response

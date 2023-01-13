@@ -1,15 +1,14 @@
 ## Maintainer Notes:
-- I've updated get_nih_data() to no longer use stop() and instead return(NA) when
-  the underlying API service is unavailable or otherwise returns a non-200 response
-- I've updated the vignette to handle such cases without throwing exception or 
-  failing to render
-- Incremented version to 0.1.3
-- Spelling NOTE is false-positive (these are contained in quotes), other 2 
-  NOTEs can by ignored
-- Still no WARNINGs/ERRORs in r-hub or win-devel tests
-- I've re-used one chunk output to reduce run-time in the vignette build and 
-  eliminated /cache use which could add some time for disk I/O. That said, this
-  takes 25 seconds to build locally.
+- I've updated code examples calling external API to use /dontrun() in place
+  of /donttest() - the latter does not prevent tests
+- I've updated the vignette to check for external API availability at the top
+  and exit knitting early if unavailable
+- These changes together should resolve the past issues with external 
+  resources not being available causing build checks to fail
+- I've reviewed all warnings/notes from rhub::check_for_cran and they can be
+  ignored - the WARNING is due to my forgetting to pass the CMD CHECK arg
+  "--compact-vignettes=gs+qpdf" 
+- thank you
 
 ## Test environments
 - R-hub windows-x86_64-devel (r-devel)
@@ -17,9 +16,15 @@
 - R-hub fedora-clang-devel (r-devel)
 
 ## R CMD check results
-❯ On windows-x86_64-devel (r-devel), ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
+❯ On ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
+  checking sizes of PDF files under ‘inst/doc’ ... WARNING
+    ‘gs+qpdf’ made some significant size reductions:
+       compacted ‘repoRter_nih.pdf’ from 382Kb to 124Kb
+    consider running tools::compactPDF(gs_quality = "ebook") on these files
+
+❯ On ubuntu-gcc-release (r-release)
   checking CRAN incoming feasibility ... NOTE
-  Maintainer: '"Michael Barr, ACAS, MAAA, CPCU" <mike@bikeactuary.com>'
+  Maintainer: ‘"Michael Barr, ACAS, MAAA, CPCU" <mike@bikeactuary.com>’
   
   New submission
   
@@ -28,14 +33,27 @@
   Possibly misspelled words in DESCRIPTION:
     JSON (10:67)
     RePORTER (11:66)
+  
+  CRAN repository db overrides:
+    X-CRAN-Comment: Archived on 2022-10-12 for repeated policy violation.
 
-❯ On windows-x86_64-devel (r-devel)
-  checking sizes of PDF files under 'inst/doc' ... NOTE
-  Unable to find GhostScript executable to run checks on size reduction
+❯ On fedora-clang-devel (r-devel)
+  checking CRAN incoming feasibility ... [6s/41s] NOTE
+  Maintainer: ‘"Michael Barr, ACAS, MAAA, CPCU" <mike@bikeactuary.com>’
+  
+  New submission
+  
+  Package was archived on CRAN
+  
+  Possibly misspelled words in DESCRIPTION:
+    JSON (10:67)
+    RePORTER (11:66)
+  
+  CRAN repository db overrides:
+    X-CRAN-Comment: Archived on 2022-10-12 for repeated policy violation.
 
-❯ On windows-x86_64-devel (r-devel)
-  checking for detritus in the temp directory ... NOTE
-  Found the following files/directories:
-    'lastMiKTeXException'
+❯ On fedora-clang-devel (r-devel)
+  checking HTML version of manual ... NOTE
+  Skipping checking HTML validation: no command 'tidy' found
 
-0 errors ✔ | 0 warnings ✔ | 3 notes ✖
+0 errors ✔ | 1 warning ✖ | 3 notes ✖

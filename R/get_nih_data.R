@@ -26,7 +26,6 @@
 #' 
 #' @examples
 #' 
-#' \donttest{
 #' library(repoRter.nih)
 #' 
 #' ## make the usual request
@@ -38,6 +37,7 @@
 #'                  message = FALSE)
 #' 
 #' ## get the data ragged
+#' \dontrun{
 #' res <- get_nih_data(req,
 #'                     max_pages = 1)
 #' 

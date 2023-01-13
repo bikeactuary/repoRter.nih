@@ -13,7 +13,7 @@
 #' \item{\code{fund_src}}{a short name for the funding source}
 #' }
 #' 
-#' @references \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf}{NIH RePORTER API Documentation}
+#' @references \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf}{NIH RePORTER API Documentation}
 #' 
 #' @keywords datasets
 "covid_response_codes"

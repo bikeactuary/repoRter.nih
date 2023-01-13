@@ -65,7 +65,7 @@ res <- get_nih_data(req,
                     flatten_result = TRUE)
 ```
 
-When `TRUE`, the `flatten_result` argument will un-nest nested `data.frame`s and atomic vectors (in which case, values are pasted together and delimited by ";").
+When `TRUE`, the `flatten_result` argument will unnest nested `data.frame`s and atomic vectors (in which case, values are pasted together and delimited by ";").
 
 ```r
 library(ggplot2)
@@ -110,7 +110,7 @@ With the basics described above you can get started with the BLS API right away.
 * [repoRter.nih R package vignette](https://CRAN.R-project.org/package=repoRter.nih)
 * [NIH RePORTER Web Search Tool](https://api.reporter.nih.gov/#/Search/post_v2_projects_search)
 * [NIH RePORTER API v2 Documentation (html, abbreviated)](https://api.reporter.nih.gov/?urls.primaryName=V2.0)
-* [NIH RePORTER API v2 Documentation (pdf, longer form)](https://api.reporter.nih.gov/documents/Data%20Elements%20for%20RePORTER%20Project%20API%20v2.pdf)
+* [NIH RePORTER API v2 Documentation (pdf, longer form)](https://api.reporter.nih.gov/documents/Data%20Elements%20for%20RePORTER%20Project%20API_V2.pdf)
 
 ## Getting Help
 If you've exhausted the resources above and require help, please open an issue in this repository. Include the problematic code, a description of the expected behavior, the unintended behavior actually observed, and your investigations so far.
