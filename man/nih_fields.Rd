@@ -27,6 +27,6 @@ data("nih_fields")
 A \code{tibble} containing name translations between payload criteria, column selection/sorting arguments, and the result set.
 }
 \references{
-\href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf}{NIH RePORTER API Documentation}
+\href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf}{NIH RePORTER API Documentation}
 }
 \keyword{datasets}

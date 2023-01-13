@@ -62,7 +62,7 @@
 #'         any of the specified strings. You may include explicit wildcard operators ("*") in the strings, e.g. "5UG1HD078437-\*"}
 #'   \item{\code{project_num_split}: list(6); the \code{project_nums} can be broken down to meaningful components which can be searched
 #'         individually using this argument.
-#'               These component codes are defined \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf#page=31}{here}
+#'               These component codes are defined \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf#page=31}{here}
 #'               Your list must contain all of the following named elements:
 #'               \itemize{
 #'                   \item{\code{appl_type_code}: character();}
@@ -77,14 +77,14 @@
 #'   \item{\code{spending_categories}: list(2); a list containing the following named elements:
 #'                \itemize{
 #'                    \item{\code{values}: numeric(): the NIH spending category code. These are congressionally defined and are
-#'                          available \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf#page=40}{here}
+#'                          available \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf#page=40}{here}
 #'                         }
 #'                    \item{\code{match_all}: logical(1); TRUE to return projects found in all categories; FALSE to return projects matching any one
 #'                          of the categories.}
 #'                }
 #'        }
 #'   \item{\code{funding_mechanism}: character(); one or more NIH funding mechanism codes used in the president's budget.
-#'         Available \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf#page=14}{here}}
+#'         Available \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf#page=14}{here}}
 #'   \item{\code{org_countries}: character(); one or more country names; e.g. "United States"}
 #'   \item{\code{appl_ids}: numeric(); one or more application IDs (note: appl. IDs are natural numbers, unlike \code{project_nums})}
 #'   \item{\code{agencies}: character(); one or more of the abbreviated NIH agency/institute/center names, available
@@ -179,7 +179,7 @@
 #' 
 #' \subsection{Field Names}{
 #'     Full listing of available field names which can be specified in \code{include_fields}, \code{exclude_fields}, and \code{sort_field}
-#'     is located \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API\%20v2.pdf}{here}
+#'     is located \href{https://api.reporter.nih.gov/documents/Data\%20Elements\%20for\%20RePORTER\%20Project\%20API_V2.pdf}{here}
 #' }
 #' 
 #' @examples

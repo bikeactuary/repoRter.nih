@@ -1,7 +1,7 @@
 Type: Package
 Package: repoRter.nih
 Title: R Interface to the 'NIH RePORTER Project' API
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: 
     person(given = "Michael",
            family = "Barr, ACAS, MAAA, CPCU",
@@ -15,7 +15,7 @@ License: MIT + file LICENSE
 URL: https://github.com/bikeactuary/repoRter.nih
 BugReports: https://github.com/bikeactuary/repoRter.nih/issues
 Depends:
-    R (>= 4.1.0)
+    R (>= 4.0.0)
 Imports:
     assertthat (>= 0.2.1),
     crayon (>= 1.4.1),
@@ -42,4 +42,4 @@ VignetteBuilder:
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

@@ -40,6 +40,15 @@ knitr::opts_chunk$set(
 
 opts.old <- options()
 options(width = 95, cli.unicode = FALSE, cli.width = 95)
+
+## confirm RePORTER is currently available before building this, for CRAN
+r <- httr::POST("https://api.reporter.nih.gov/v2/projects/search",
+           httr::accept("application/json"),
+           httr::content_type_json(),
+           body = "{\"criteria\":{\"foa\":[\"RFA-NS-19-036\"]},\"include_fields\":[\"ApplId\"],\"offset\":0,\"limit\":10,\"sort_field\":\"appl_id\",\"sort_order\":\"desc\"}",
+           encode = "raw"
+           )
+if (r$status_code != 200) knitr::knit_exit()
 ```
 
 ```{r, echo = FALSE, message = FALSE, fig.width=7, fig.height=4, fig.align='center'}
