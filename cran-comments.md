@@ -7,8 +7,10 @@
   resources not being available causing build checks to fail
 - I've reviewed all warnings/notes from rhub::check_for_cran and they can be
   ignored - the WARNING is due to my forgetting to pass the CMD CHECK arg
-  "--compact-vignettes=gs+qpdf" 
-- thank you
+  "--compact-vignettes=gs+qpdf"
+- Finally I've made some changes (pre-rendering a plot and dataset) in order
+  to reduce vignette build time for CRAN checks
+- thanks
 
 ## Test environments
 - R-hub windows-x86_64-devel (r-devel)

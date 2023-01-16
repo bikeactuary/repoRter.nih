@@ -2,6 +2,7 @@
 
 * Changes to ensure calls to API are not tested on CRAN (\dontrun{} replaces \donttest{})
 * Exit vignette knitting early if API not available, for CRAN
+* reduce vignette build time for CRAN
 
 # repoRter.nih 0.1.3
 
